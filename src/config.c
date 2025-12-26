@@ -5,67 +5,86 @@
 #include <string.h>
 #include <strings.h>
 
-// Set default configuration values
+/* Set default configuration values */
 void config_set_defaults(config_t *config) {
-  // Audio defaults
-  strcpy(config->audio_source, "auto");
+  /* Audio defaults */
+  strncpy(config->audio_source, "auto", sizeof(config->audio_source) - 1);
+  config->audio_source[sizeof(config->audio_source) - 1] = '\0';
+
   config->sample_rate = 44100;
   config->buffer_size = 2048;
 
-  // Visual defaults
+  /* Visual defaults */
   config->bar_count = 32;
-  strcpy(config->bar_char, "█");
-  config->use_colors = 1;
-  config->gradient_mode = 1; // Rainbow
-  strcpy(config->color_low, "blue");
-  strcpy(config->color_mid, "cyan");
-  strcpy(config->color_high, "magenta");
 
-  // Processing defaults
+  strncpy(config->bar_char, "█", sizeof(config->bar_char) - 1);
+  config->bar_char[sizeof(config->bar_char) - 1] = '\0';
+
+  config->use_colors = 1;
+  config->gradient_mode = 1;
+
+  strncpy(config->color_low, "blue", sizeof(config->color_low) - 1);
+  config->color_low[sizeof(config->color_low) - 1] = '\0';
+
+  strncpy(config->color_mid, "cyan", sizeof(config->color_mid) - 1);
+  config->color_mid[sizeof(config->color_mid) - 1] = '\0';
+
+  strncpy(config->color_high, "magenta", sizeof(config->color_high) - 1);
+  config->color_high[sizeof(config->color_high) - 1] = '\0';
+
+  /* Processing defaults */
   config->sensitivity = 1.5f;
   config->smoothing = 0.7f;
   config->bass_boost = 1.2f;
   config->min_freq = 20;
   config->max_freq = 20000;
 
-  // Performance defaults
+  /* Performance defaults */
   config->fps = 60;
   config->sleep_timer = 1000;
 
-  // Layout defaults
-  config->orientation = 0; // Vertical
+  /* Layout defaults */
+  config->orientation = 0;
   config->reverse = 0;
   config->bar_width = 2;
   config->bar_spacing = 1;
 }
 
-// Parse a single line from the INI file
+/* Parse a single line from the INI file */
 static void parse_line(const char *section, const char *key, const char *value,
                        config_t *config) {
+
   if (strcmp(section, "audio") == 0) {
     if (strcmp(key, "source") == 0) {
       strncpy(config->audio_source, value, sizeof(config->audio_source) - 1);
+      config->audio_source[sizeof(config->audio_source) - 1] = '\0';
     } else if (strcmp(key, "sample_rate") == 0) {
       config->sample_rate = atoi(value);
     } else if (strcmp(key, "buffer_size") == 0) {
       config->buffer_size = atoi(value);
     }
+
   } else if (strcmp(section, "visual") == 0) {
     if (strcmp(key, "bar_count") == 0) {
       config->bar_count = atoi(value);
     } else if (strcmp(key, "bar_char") == 0) {
       strncpy(config->bar_char, value, sizeof(config->bar_char) - 1);
+      config->bar_char[sizeof(config->bar_char) - 1] = '\0';
     } else if (strcmp(key, "use_colors") == 0) {
       config->use_colors = parse_bool(value);
     } else if (strcmp(key, "gradient_mode") == 0) {
       config->gradient_mode = atoi(value);
     } else if (strcmp(key, "color_low") == 0) {
       strncpy(config->color_low, value, sizeof(config->color_low) - 1);
+      config->color_low[sizeof(config->color_low) - 1] = '\0';
     } else if (strcmp(key, "color_mid") == 0) {
       strncpy(config->color_mid, value, sizeof(config->color_mid) - 1);
+      config->color_mid[sizeof(config->color_mid) - 1] = '\0';
     } else if (strcmp(key, "color_high") == 0) {
       strncpy(config->color_high, value, sizeof(config->color_high) - 1);
+      config->color_high[sizeof(config->color_high) - 1] = '\0';
     }
+
   } else if (strcmp(section, "processing") == 0) {
     if (strcmp(key, "sensitivity") == 0) {
       config->sensitivity = atof(value);
@@ -78,12 +97,14 @@ static void parse_line(const char *section, const char *key, const char *value,
     } else if (strcmp(key, "max_freq") == 0) {
       config->max_freq = atoi(value);
     }
+
   } else if (strcmp(section, "performance") == 0) {
     if (strcmp(key, "fps") == 0) {
       config->fps = atoi(value);
     } else if (strcmp(key, "sleep_timer") == 0) {
       config->sleep_timer = atoi(value);
     }
+
   } else if (strcmp(section, "layout") == 0) {
     if (strcmp(key, "orientation") == 0) {
       config->orientation = atoi(value);
@@ -97,44 +118,36 @@ static void parse_line(const char *section, const char *key, const char *value,
   }
 }
 
-// Load configuration from INI file
+/* Load configuration from INI file */
 int config_load(const char *filename, config_t *config) {
   FILE *file = fopen(filename, "r");
 
-  // Set defaults first
   config_set_defaults(config);
 
-  if (!file) {
+  if (!file)
     return 0;
-  }
 
   char line[512];
   char section[64] = "";
 
   while (fgets(line, sizeof(line), file)) {
-    // Remove newline
-    line[strcspn(line, "\r\n")] = 0;
-
-    // Trim whitespace
+    line[strcspn(line, "\r\n")] = '\0';
     trim_whitespace(line);
 
-    // Skip empty lines and comments
-    if (line[0] == '\0' || line[0] == ';' || line[0] == '#') {
+    if (line[0] == '\0' || line[0] == ';' || line[0] == '#')
       continue;
-    }
 
-    // Check for section header
     if (line[0] == '[') {
       char *end = strchr(line, ']');
       if (end) {
         *end = '\0';
         strncpy(section, line + 1, sizeof(section) - 1);
+        section[sizeof(section) - 1] = '\0';
         trim_whitespace(section);
       }
       continue;
     }
 
-    // Parse key=value pair
     char *equals = strchr(line, '=');
     if (equals) {
       *equals = '\0';
@@ -152,34 +165,43 @@ int config_load(const char *filename, config_t *config) {
   return 1;
 }
 
-// Print current configuration (for debugging)
-void config_print(const config_t *config) {
-  printf("=== Audio Settings ===\n");
-  printf("  Source: %s\n", config->audio_source);
-  printf("  Sample Rate: %d\n", config->sample_rate);
-  printf("  Buffer Size: %d\n", config->buffer_size);
+/* Save configuration to INI file */
+int config_save(const char *filename, const config_t *config) {
+  FILE *file = fopen(filename, "w");
+  if (!file)
+    return -1;
 
-  printf("\n=== Visual Settings ===\n");
-  printf("  Bar Count: %d\n", config->bar_count);
-  printf("  Bar Char: %s\n", config->bar_char);
-  printf("  Use Colors: %d\n", config->use_colors);
-  printf("  Gradient Mode: %d\n", config->gradient_mode);
-  printf("  Colors: %s / %s / %s\n", config->color_low, config->color_mid,
-         config->color_high);
+  fprintf(file, "[audio]\n");
+  fprintf(file, "source = %s\n", config->audio_source);
+  fprintf(file, "sample_rate = %d\n", config->sample_rate);
+  fprintf(file, "buffer_size = %d\n\n", config->buffer_size);
 
-  printf("\n=== Processing Settings ===\n");
-  printf("  Sensitivity: %.2f\n", config->sensitivity);
-  printf("  Smoothing: %.2f\n", config->smoothing);
-  printf("  Bass Boost: %.2f\n", config->bass_boost);
-  printf("  Freq Range: %d - %d Hz\n", config->min_freq, config->max_freq);
+  fprintf(file, "[visual]\n");
+  fprintf(file, "bar_count = %d\n", config->bar_count);
+  fprintf(file, "bar_char = %s\n", config->bar_char);
+  fprintf(file, "use_colors = %d\n", config->use_colors);
+  fprintf(file, "gradient_mode = %d\n", config->gradient_mode);
+  fprintf(file, "color_low = %s\n", config->color_low);
+  fprintf(file, "color_mid = %s\n", config->color_mid);
+  fprintf(file, "color_high = %s\n\n", config->color_high);
 
-  printf("\n=== Performance Settings ===\n");
-  printf("  FPS: %d\n", config->fps);
-  printf("  Sleep Timer: %d ms\n", config->sleep_timer);
+  fprintf(file, "[processing]\n");
+  fprintf(file, "sensitivity = %.2f\n", config->sensitivity);
+  fprintf(file, "smoothing = %.2f\n", config->smoothing);
+  fprintf(file, "bass_boost = %.2f\n", config->bass_boost);
+  fprintf(file, "min_freq = %d\n", config->min_freq);
+  fprintf(file, "max_freq = %d\n\n", config->max_freq);
 
-  printf("\n=== Layout Settings ===\n");
-  printf("  Orientation: %d\n", config->orientation);
-  printf("  Reverse: %d\n", config->reverse);
-  printf("  Bar Width: %d\n", config->bar_width);
-  printf("  Bar Spacing: %d\n", config->bar_spacing);
+  fprintf(file, "[performance]\n");
+  fprintf(file, "fps = %d\n", config->fps);
+  fprintf(file, "sleep_timer = %d\n\n", config->sleep_timer);
+
+  fprintf(file, "[layout]\n");
+  fprintf(file, "orientation = %d\n", config->orientation);
+  fprintf(file, "reverse = %d\n", config->reverse);
+  fprintf(file, "bar_width = %d\n", config->bar_width);
+  fprintf(file, "bar_spacing = %d\n\n", config->bar_spacing);
+
+  fclose(file);
+  return 0;
 }

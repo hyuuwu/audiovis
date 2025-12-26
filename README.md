@@ -4,12 +4,13 @@ A highly customizable terminal-based audio visualizer built in C, featuring Pipe
 
 ## Features
 
-- 🎵 **PipeWire Audio Capture**: Captures system audio with auto-detection
-- 🎨 **Customizable Visuals**: Multiple gradient modes, custom colors, and bar styles
-- 🔊 **Advanced Audio Processing**: Sensitivity, smoothing, bass boost, frequency range control
-- ⚡ **High Performance**: Configurable FPS, optimized rendering
-- 🎛️ **Flexible Layout**: Vertical/horizontal orientation, bar width/spacing control
-- ⚙️ **INI Configuration**: Easy-to-edit config file with all options
+- **PipeWire Audio Capture**
+- **Customizable Visuals**
+- **Advanced Audio Processing**
+- **High Performance**
+- **Flexible Layout**
+- **INI Configuration**
+- **Lightweight**
 
 ## Dependencies
 
@@ -41,11 +42,19 @@ make
 ./audiovis /path/to/config.ini
 ```
 
-Press `q` or `ESC` to quit.
+Press `q` or `ESC` to quit
+
+## Installing
+
+```bash
+sudo make install
+
+```
 
 ## Configuration
 
-Edit `config.ini` to customize the visualizer. All options are documented in the file.
+Edit `config.ini` to customize the visualizer, the file is self-explanatory.
+The config file is located in `~/.config/audiovis/config.ini`.
 
 ### Audio Settings
 - `source`: PipeWire audio source (or "auto" for auto-detection)
@@ -104,4 +113,4 @@ bar_width = 1
 
 ## License
 
-MIT License - feel free to customize and modify!
+GNU GPLv3

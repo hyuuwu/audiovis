@@ -36,7 +36,9 @@ typedef struct {
 
 // Function prototypes
 int config_load(const char *filename, config_t *config);
+int config_save(const char *filename, const config_t *config);
 void config_set_defaults(config_t *config);
 void config_print(const config_t *config);
+int config_editor_run(config_t *config, const char *config_file);
 
 #endif // CONFIG_H
