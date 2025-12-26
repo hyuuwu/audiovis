@@ -4,12 +4,12 @@ A highly customizable terminal-based audio visualizer built in C, featuring Pipe
 
 ## Features
 
-- 🎵 **PipeWire Audio Capture**: Captures system audio with auto-detection
-- 🎨 **Customizable Visuals**: Multiple gradient modes, custom colors, and bar styles
-- 🔊 **Advanced Audio Processing**: Sensitivity, smoothing, bass boost, frequency range control
-- ⚡ **High Performance**: Configurable FPS, optimized rendering
-- 🎛️ **Flexible Layout**: Vertical/horizontal orientation, bar width/spacing control
-- ⚙️ **INI Configuration**: Easy-to-edit config file with all options
+- **PipeWire Audio Capture**
+- **Customizable Visuals**
+- **Advanced Audio Processing**
+- **High Performance**
+- **Flexible Layout**
+- **INI Configuration**
 
 ## Dependencies
 
@@ -29,7 +29,6 @@ sudo dnf install pipewire-devel fftw-devel ncurses-devel
 ## Building
 
 ```bash
-cd /home/hyu/lambda/code/c/audiovis
 make
 ```
 
@@ -102,6 +101,4 @@ orientation = 1
 bar_width = 1
 ```
 
-## License
 
-MIT License - feel free to customize and modify!
